@@ -1,4 +1,5 @@
 """View module for handling requests about customers"""
+
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -37,7 +38,6 @@ class CustomerView(ViewSet):
         serialized = CustomerSerializer(customer)
         return Response(serialized.data)
 
-
     def list(self, request):
         """Handle GET requests to customers resource
 
@@ -59,15 +59,21 @@ class CustomerView(ViewSet):
         customer.name = request.data["name"]
         customer.save()
 
-        serialized = CustomerSerializer(customer, context={'request': request})
+        serialized = CustomerSerializer(customer, context={"request": request})
         return Response(serialized.data, status=status.HTTP_201_CREATED)
 
 
 class CustomerSerializer(serializers.ModelSerializer):
     """JSON serializer for customer creator"""
 
-
     class Meta:
         """JSON serializer for customer creator"""
+
         model = Customer
-        fields = ('id', 'stylist', 'name', 'date_created',)
+        fields = (
+            "id",
+            "stylist",
+            "name",
+            "date_created",
+            "appointments",
+        )

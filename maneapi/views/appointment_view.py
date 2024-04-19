@@ -1,4 +1,5 @@
 """View module for handling requests about appointments"""
+
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -39,7 +40,6 @@ class AppointmentView(ViewSet):
         serialized = AppointmentSerializer(appointment)
         return Response(serialized.data)
 
-
     def list(self, request):
         """Handle GET requests to appointments resource
 
@@ -66,15 +66,20 @@ class AppointmentView(ViewSet):
         appointment.appointment_date = appointment_date
         appointment.save()
 
-        serialized = AppointmentSerializer(appointment, context={'request': request})
+        serialized = AppointmentSerializer(appointment, context={"request": request})
         return Response(serialized.data, status=status.HTTP_201_CREATED)
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
     """JSON serializer for appointment creator"""
 
-
     class Meta:
         """JSON serializer for appointment creator"""
+
         model = Appointment
-        fields = ('id', 'stylist', 'prepaid', 'appointment_date',)
+        fields = (
+            "id",
+            "stylist",
+            "prepaid",
+            "appointment_date",
+        )
