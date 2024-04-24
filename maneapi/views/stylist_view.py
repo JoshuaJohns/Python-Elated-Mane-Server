@@ -1,8 +1,10 @@
 """View module for handling requests about stylists"""
+
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from django.contrib.auth.models import User
+from maneapi.models import Appointment, Customer, Equipment, EquipmentType
 
 """
 Users (un:pwd)
@@ -45,7 +47,6 @@ class StylistView(ViewSet):
         serialized = StylistSerializer(stylist)
         return Response(serialized.data)
 
-
     def list(self, request):
         """Handle GET requests to stylists resource
 
@@ -57,10 +58,42 @@ class StylistView(ViewSet):
         return Response(serialized.data)
 
 
+class StylistAppointmentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = (
+            "customer",
+            "prepaid",
+        )
+
+
+class StylistToolsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Equipment
+        fields = ("type",)
+        depth = 1
+
+
+class StylistCustomersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ("name",)
+
+
 class StylistSerializer(serializers.ModelSerializer):
     """JSON serializer for stylist creator"""
 
+    customers = StylistCustomersSerializer(many=True)
+    tools = StylistToolsSerializer(many=True)
 
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'username',)
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "username",
+            "customers",
+            "tools",
+        )
