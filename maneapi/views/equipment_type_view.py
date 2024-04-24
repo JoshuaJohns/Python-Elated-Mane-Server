@@ -1,4 +1,5 @@
 """View module for handling requests about equipmentTypes"""
+
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -55,14 +56,33 @@ class EquipmentTypeView(ViewSet):
         equipment_type.label = label
         equipment_type.save()
 
-        serialized = EquipmentTypeSerializer( equipment_type)
+        serialized = EquipmentTypeSerializer(equipment_type)
         return Response(serialized.data, status=status.HTTP_201_CREATED)
+
+
+class CurrentEquipmentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Equipment
+        fields = (
+            "manufacturer",
+            "cost",
+            "type",
+            "purchase_date",
+            "stylist",
+        )
 
 
 class EquipmentTypeSerializer(serializers.ModelSerializer):
     """JSON serializer for equipmentType creator"""
 
+    current_equipment = CurrentEquipmentTypeSerializer(many=True)
+
     class Meta:
         """JSON serializer for equipmentType creator"""
+
         model = EquipmentType
-        fields = ( 'id', 'label', )
+        fields = (
+            "id",
+            "label",
+            "current_equipment",
+        )
